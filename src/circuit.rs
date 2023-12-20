@@ -290,10 +290,13 @@ pub fn make_circuits<F: RichField + Extendable<D>, const D: usize>(
     for _ in 0..msg_len_in_bits {
         message.push(builder.add_virtual_bool_target_unsafe());
     }
+    // true represents 1. We start padding with 1.
     message.push(builder.constant_bool(true));
+    // false below represents 0. Rest of the padding after 1 expect message len in 64 bits.
     for _ in 0..p - 1 {
         message.push(builder.constant_bool(false));
     }
+    // message length padding
     for i in 0..64 {
         let b = ((msg_len_in_bits as u64) >> (63 - i)) & 1;
         message.push(builder.constant_bool(b == 1));
